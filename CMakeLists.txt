@@ -2,13 +2,14 @@
 ################################################################################
 cmake_minimum_required(VERSION 3.5)
 
-set(PROG_TYPE usbasp)                                   #own setting: 'usbasp' or 'arduino' to use the bootloader from arduino
+set(PROG_TYPE STK500)                                   #own setting: 'usbasp', 'STK500' or 'arduino' to use the bootloader from arduino
 
 
 # Variables regarding the AVR chip
 set(MCU   atmega328p)                                   #own setting: used micro controller 
 set(F_CPU 16000000)                                     #own setting: clock frequence of the micro controller
 set(BAUD  9600)                                         #own setting: count of signal changes per seconds
+SET(USB_MOUNT /dev/ttyACM0)                             #own setting: set the USB port/ mounted directory
 add_definitions(-DF_CPU=${F_CPU})
 
 # program names
@@ -91,7 +92,7 @@ add_custom_target(strip ALL     ${AVRSTRIP} "${PROJECT_NAME}.elf" DEPENDS ${PROJ
 add_custom_target(hex   ALL     ${OBJCOPY} -R .eeprom -O ihex "${PROJECT_NAME}.elf" "${PROJECT_NAME}.hex" DEPENDS strip)
 add_custom_target(eeprom        ${OBJCOPY} -j .eeprom --change-section-lma .eeprom=0 -O ihex "${PROJECT_NAME}.elf" "${PROJECT_NAME}.eeprom" DEPENDS strip)
 
-add_custom_target(flash ${AVRDUDE} -c ${PROG_TYPE} -p ${MCU} -U flash:w:${PROJECT_NAME}.hex DEPENDS hex)
+add_custom_target(flash ${AVRDUDE} -c ${PROG_TYPE} -P ${USB_MOUNT} -p ${MCU} -b ${BAUD} -U flash:w:${PROJECT_NAME}.hex DEPENDS hex)
 
 
 set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${PROJECT_NAME}.hex;${PROJECT_NAME}.eeprom;${PROJECT_NAME}.lst")
