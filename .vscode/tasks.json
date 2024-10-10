@@ -1,0 +1,37 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build AVR Project",
+            "type": "shell",
+            "command": "make",
+            "args": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/build"  // Verzeichnis, in dem das Makefile gesucht wird
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Task to compile the AVR project using make."
+        },
+        {
+            "label": "Flash AVR Project",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "flash",
+                "PORT=/dev/ttyUSB0"                 // USB Port an dem der USBASP oder Arduino angeschlossen ist
+            ],
+            "group": "none",
+            "options": {
+                "cwd": "${workspaceFolder}/build"   // Verzeichnis, in dem das Makefile gesucht wird
+            },
+            "dependsOn": "Build AVR Project",
+            "problemMatcher": []
+        }
+    ]
+}
